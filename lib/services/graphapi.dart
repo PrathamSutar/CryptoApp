@@ -9,10 +9,8 @@ import '../Models/chartmodel.dart';
 import 'package:crypto_currency_app556/Models/chartmodel.dart';
 import 'package:crypto_currency_app556/Models/model.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter/src/widgets/container.dart';
 import 'package:flutter/src/widgets/framework.dart';
 import 'package:http/http.dart' as http;
-
 import '../app_themes/app_themes.dart';
 
 class Graphapi extends StatefulWidget {
@@ -25,8 +23,7 @@ class Graphapi extends StatefulWidget {
 }
 
 class _GraphapiState extends State<Graphapi> {
-
-   bool isdarkmode = AppTheme.isdarkmodeenable;
+  bool isdarkmode = AppTheme.isdarkmodeenable;
   bool isfirsttime = true;
   bool isLoading = false;
   List<FlSpot> flspotlist = [];
@@ -81,64 +78,6 @@ class _GraphapiState extends State<Graphapi> {
       });
     }
   }
-
-
-
-
-
-
-
-
-  // graphapi(coinDetailsModel) {
-  //   bool isfirsttime = true;
-  //   bool isLoading = false;
-  //   List<FlSpot> flspotlist = [];
-  //   double minX = 0.0, maxX = 0.0, minY = 0.0, maxY = 0.0;
-
-  //   void getChartdata(String days) async {
-  //     if (isfirsttime) {
-  //       isfirsttime = false;
-  //     } else {
-  //       setState(() {
-  //         isLoading = true;
-  //       });
-  //     }
-  //     final response = await http.get(Uri.parse(
-  //         "https://api.coingecko.com/api/v3/coins/${widget.coinDetailsModel.id}/market_chart?vs_currency=inr&days=$days"));
-
-  //     if (response.statusCode == 200) {
-  //       Map<String, dynamic> result = jsonDecode(response.body);
-
-  //       List rawList = result['prices'];
-
-  //       List<List> chartdata = rawList.map((e) => e as List).toList();
-
-  //       List<PriceAndTime> PriceAndtimeList = chartdata
-  //           .map((e) => PriceAndTime(price: e[1] as double, time: e[0] as int))
-  //           .toList();
-
-  //       flspotlist = [];
-
-  //       for (var e in PriceAndtimeList) {
-  //         flspotlist.add(FlSpot(e.time.toDouble(), e.price));
-  //       }
-
-  //       minX = PriceAndtimeList.first.time.toDouble();
-  //       maxX = PriceAndtimeList.last.time.toDouble();
-
-  //       PriceAndtimeList.sort(
-  //         (a, b) => a.price.compareTo(b.price),
-  //       );
-
-  //       minY = PriceAndtimeList.first.price;
-  //       maxY = PriceAndtimeList.last.price;
-
-  //       setState(() {
-  //         isLoading = true;
-  //       });
-  //     }
-  //   }
-  // }
 
   @override
   Widget build(BuildContext context) {
