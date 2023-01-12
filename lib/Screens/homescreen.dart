@@ -1,10 +1,12 @@
-import 'package:crypto_currency_app556/Models/model.dart';
-import 'package:crypto_currency_app556/Screens/app_themes/app_themes.dart';
+import 'package:crypto_currency_app556/Screens/secondscreen.dart';
+import 'package:crypto_currency_app556/app_themes/app_themes.dart';
 import 'package:crypto_currency_app556/Screens/updateprofilescreen.dart';
-import 'package:crypto_currency_app556/Screens/utils/listviwe_widget.dart';
+import 'package:crypto_currency_app556/utils/listviwe_widget.dart';
 import 'package:crypto_currency_app556/services/httpcall.dart';
 import 'package:flutter/material.dart';
 import 'package:shared_preferences/shared_preferences.dart';
+import 'package:crypto_currency_app556/Models/model.dart';
+
 import 'package:http/http.dart' as http;
 
 class homescreen extends StatefulWidget {
@@ -15,6 +17,9 @@ class homescreen extends StatefulWidget {
 }
 
 class _homescreenState extends State<homescreen> {
+  List<CoinDetailsModel> dat1 = [];
+
+  List<CoinDetailsModel> coindetaillist = [];
   GlobalKey<ScaffoldState> _globalKey = GlobalKey<ScaffoldState>();
   String name = "", eamil = "";
 
@@ -23,18 +28,11 @@ class _homescreenState extends State<homescreen> {
   @override
   void initState() {
     getuserdetail();
-    getcoindata();
-
+    Apiservice().getcoinsdetails();
+    getapiresp();
+    coindetaillist = dat1;
     super.initState();
   }
-
-
-  
-
-
-
-
-
 
   void getuserdetail() async {
     SharedPreferences prefs = await SharedPreferences.getInstance();
@@ -44,22 +42,18 @@ class _homescreenState extends State<homescreen> {
     });
   }
 
-  getcoindata()async{
-
-     ApiService().getcoindetails();
-
-     
-
-    
-
-
-
+  getapiresp() async {
+    dat1 = (await Apiservice().getcoinsdetails());
+    setState(() {
+      dat1;
+    });
   }
 
-
-
-
-
+  Future<void> refresh() async {
+    setState(() {
+      dat1;
+    });
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -150,29 +144,97 @@ class _homescreenState extends State<homescreen> {
       body: SizedBox(
         width: double.infinity,
         child: Column(
-          children:  [
+          children: [
             Padding(
               padding: EdgeInsets.symmetric(horizontal: 10, vertical: 10),
               child: TextField(
+                style:
+                    TextStyle(color: isdarkmode ? Colors.white : Colors.black),
+                onChanged: (Query) {
+                  List<CoinDetailsModel> searchResult = dat1.where((Element) {
+                    String coinname = Element.name.toString();
+
+                    bool isItemFound = coinname.contains(Query);
+
+                    return isItemFound;
+                  }).toList();
+                  setState(() {
+                    coindetaillist = searchResult;
+                  });
+                },
                 decoration: InputDecoration(
-                  border: OutlineInputBorder(
-                      borderRadius: BorderRadius.all(Radius.circular(20.0))),
-                  hintText: "Search Coins",
-                  prefixIcon: Icon(Icons.search)
-                ),
+                    enabledBorder:
+                        OutlineInputBorder(borderSide: BorderSide(width: 0)),
+                    focusedBorder: OutlineInputBorder(
+                        borderRadius: BorderRadius.circular(20),
+                        borderSide: BorderSide(
+                            color: isdarkmode ? Colors.white : Colors.black)),
+                    hintText: "Search Coins",
+                    hintStyle: TextStyle(
+                        color: isdarkmode ? Colors.white : Colors.black),
+                    prefixIcon: Icon(
+                      Icons.search,
+                      color: isdarkmode ? Colors.white : Colors.black,
+                    )),
               ),
             ),
             SizedBox(
               height: 5,
-            ), Expanded(child: ListView.builder(
-              itemCount: 1,
-              
-              itemBuilder: (context, index) {
-                return listviwe_widget();
-              
-            },))
-
-          
+            ),
+            Expanded(
+                child: RefreshIndicator(
+              onRefresh: refresh,
+              child: Scrollbar(
+                child: ListView.builder(
+                    itemCount: coindetaillist.length,
+                    itemBuilder: (context, index) {
+                      return Padding(
+                        padding: const EdgeInsets.all(8.0),
+                        child: InkWell(
+                          onTap: () {
+                            Navigator.push(
+                                context,
+                                MaterialPageRoute(
+                                  builder: (context) => secondscreen(
+                                      coinDetailsModel: coindetaillist[index]),
+                                ));
+                          },
+                          child: ListTile(
+                            leading: Image.network(
+                                coindetaillist[index].image.toString()),
+                            title: Text(
+                              "${coindetaillist[index].name}\n${dat1[index].id}"
+                                  .trim(),
+                              style: TextStyle(
+                                color: isdarkmode ? Colors.white : Colors.black,
+                              ),
+                            ),
+                            trailing: RichText(
+                              textAlign: TextAlign.end,
+                              text: TextSpan(
+                                  text:
+                                      "RS.${coindetaillist[index].currentPrice}\n",
+                                  style: TextStyle(
+                                    fontWeight: FontWeight.bold,
+                                    color: isdarkmode
+                                        ? Colors.white
+                                        : Colors.black,
+                                  ),
+                                  children: [
+                                    TextSpan(
+                                        text:
+                                            "${coindetaillist[index].priceChangePercentage24h}",
+                                        style: TextStyle(
+                                            fontWeight: FontWeight.w500,
+                                            color: Colors.red))
+                                  ]),
+                            ),
+                          ),
+                        ),
+                      );
+                    }),
+              ),
+            ))
           ],
         ),
       ),

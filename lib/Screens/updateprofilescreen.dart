@@ -1,6 +1,6 @@
 import 'dart:ui';
 
-import 'package:crypto_currency_app556/Screens/app_themes/app_themes.dart';
+import 'package:crypto_currency_app556/app_themes/app_themes.dart';
 import 'package:flutter/material.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
@@ -25,7 +25,8 @@ class updateprofile extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      backgroundColor: isdarkmodeenable ? Color.fromARGB(255, 52, 47, 47) : Colors.white,
+      backgroundColor:
+          isdarkmodeenable ? Color.fromARGB(255, 52, 47, 47) : Colors.white,
       appBar: AppBar(
         backgroundColor:
             isdarkmodeenable ? Color.fromARGB(255, 52, 47, 47) : Colors.blue,
@@ -50,7 +51,8 @@ class updateprofile extends StatelessWidget {
       String title, TextEditingController controller, String labletext) {
     return Padding(
       padding: EdgeInsets.all(15),
-      child: TextField(style: TextStyle(color: isdarkmodeenable?Colors.white:Colors.black),
+      child: TextField(
+        style: TextStyle(color: isdarkmodeenable ? Colors.white : Colors.black),
         controller: controller,
         decoration: InputDecoration(
             enabledBorder: OutlineInputBorder(
